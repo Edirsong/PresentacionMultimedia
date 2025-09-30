@@ -7,86 +7,97 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* CAMBIO: Se aumenta el tamaño de la fuente base en un 25% para escalar solo el texto. */
-        html {
-            font-size: 125%; /* Base de 16px * 1.25 = 20px */
-        }
-
+        /* Estilos Base Optimizados */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
         #presentation-container {
             width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
             background-color: #f9fafb;
-            overflow: hidden; 
+            overflow: hidden;
         }
+
+        /* Contenedor de diapositivas para scroll en móviles */
+        #slides-wrapper {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Estructura de diapositivas responsiva */
         .slide {
-            display: none;
-            width: 100%;
-            height: 100%;
-            /* CAMBIO: Se ajusta el padding para dar más espacio al contenido. */
-            padding: 3rem 5rem;
-            opacity: 0;
-            position: absolute;
-            transition: opacity 0.6s ease-in-out;
-            background-color: #f9fafb; /* Default light slide background */
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 2rem 1.5rem 6rem; /* <--- LÍNEA MODIFICADA */
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.6s ease-in-out;
+    background-color: #f9fafb;
+    overflow-y: auto;
+}
+        
+        /* Ajuste de padding para pantallas más grandes */
+        @media (min-width: 768px) {
+            .slide {
+                padding: 3rem;
+                justify-content: center; /* Re-centrar en pantallas más grandes */
+            }
         }
+        @media (min-width: 1280px) {
+            .slide {
+                padding: 3rem 5rem;
+            }
+        }
+
         .slide.active {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            /* CAMBIO: Se elimina align-items: center para permitir que el contenido use todo el ancho. */
             opacity: 1;
             z-index: 10;
         }
-        
-        /* CAMBIO: Se elimina la regla de escalado general (transform: scale) para evitar recortes. */
 
-        /* Animation Classes */
+        /* Animaciones (sin cambios) */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes expandWidth { from { width: 0; } to { width: 100%; } }
-
         .active .animate-fade-in { animation: fadeIn 0.8s ease-in-out forwards; }
         .active .animate-fade-in-up { animation: fadeInUp 0.8s ease-in-out forwards; }
         .active .animate-expand { animation: expandWidth 1s ease-in-out forwards; }
-        
         .active .stagger-children > * {
             opacity: 0;
             animation: fadeInUp 0.7s ease-out forwards;
         }
-        /* Staggered animation delays */
         .active .stagger-children > *:nth-child(1) { animation-delay: 0.2s; }
         .active .stagger-children > *:nth-child(2) { animation-delay: 0.4s; }
         .active .stagger-children > *:nth-child(3) { animation-delay: 0.6s; }
         .active .stagger-children > *:nth-child(4) { animation-delay: 0.8s; }
 
-        /* Flip Card */
+        /* Flip Card con altura flexible */
         .flip-card {
             background-color: transparent;
             width: 100%;
-            /* CAMBIO: Se aumenta la altura para que el texto más grande quepa correctamente. */
-            height: 300px;
             perspective: 1000px;
             cursor: pointer;
-            /* NUEVO: Transición suave para el levantamiento */
             transition: transform 0.3s ease;
         }
-
-        /* NUEVO: Efecto de levantamiento mejorado al pasar el puntero */
         .flip-card:hover {
-            transform: translateY(-12px); /* Levanta la tarjeta un poco más */
+            transform: translateY(-10px);
         }
-
         .flip-card-inner {
             position: relative;
             width: 100%;
             height: 100%;
+            min-height: 200px; /* Altura mínima para asegurar visibilidad */
             text-align: center;
             transition: transform 0.8s;
             transform-style: preserve-3d;
@@ -98,187 +109,159 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            -webkit-backface-visibility: hidden; /* Safari */
+            -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             border-radius: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
-            /* NUEVO: Transición para el cambio de sombra */
+            padding: 1.5rem;
             transition: box-shadow 0.3s ease;
         }
-
-        /* NUEVO: Se aplica la sombra con color al elemento hijo (.flip-card-front) para respetar los bordes redondeados */
         .flip-card:hover .flip-card-front {
-            box-shadow: 0 20px 25px -10px rgb(0 0 0 / 0.2), 0 0 20px 4px rgb(99 102 241 / 0.5); /* Sombra + Brillo Indigo */
+            box-shadow: 0 20px 25px -10px rgb(0 0 0 / 0.2), 0 0 20px 4px rgb(99 102 241 / 0.5);
         }
-        
-        /* NUEVO: Se aplica un brillo similar a la cara trasera para consistencia y evitar conflictos de color */
         .flip-card:hover .flip-card-back {
-            box-shadow: 0 20px 25px -10px rgb(0 0 0 / 0.2), 0 0 20px 4px rgb(255 255 255 / 0.2); /* Sombra + Brillo Blanco Sutil */
+            box-shadow: 0 20px 25px -10px rgb(0 0 0 / 0.2), 0 0 20px 4px rgb(255 255 255 / 0.2);
         }
-
         .flip-card-back {
             transform: rotateY(180deg);
         }
         
-        /* ESTILOS ELIMINADOS: Se borran los estilos de .trivia-impact-option */
-
-
-        /* NUEVO: Estilos para las tarjetas de trivia finales */
-        .impact-card {
-            height: 220px;
-        }
+        /* Trivia Cards */
         .impact-card .flip-card-front {
-            background-color: #1e293b; /* slate-800 */
-            border: 2px solid #475569; /* slate-600 */
-            color: #cbd5e1; /* slate-300 */
-            text-align: center;
-            font-size: 1.5rem; /* 24px */
-            line-height: 2rem; /* 32px */
-            transition: all 0.3s ease;
+            background-color: #1e293b; border: 2px solid #475569; color: #cbd5e1;
+            text-align: center; font-size: 1.25rem; line-height: 1.75rem; transition: all 0.3s ease;
+        }
+        @media(min-width: 768px) {
+            .impact-card .flip-card-front { font-size: 1.5rem; line-height: 2rem; }
         }
         .impact-card:hover .flip-card-front {
-            border-color: #6366f1; /* indigo-500 */
-            box-shadow: 0 0 15px 2px rgb(99 102 241 / 0.6);
-            color: #fff;
+            border-color: #6366f1; box-shadow: 0 0 15px 2px rgb(99 102 241 / 0.6); color: #fff;
         }
         .impact-card .flip-card-back.correct {
-            background-color: #166534; /* green-800 */
-            border: 2px solid #22c55e; /* green-500 */
-            color: #fff;
-            box-shadow: 0 0 20px 5px rgb(34 197 94 / 0.4);
+            background-color: #166534; border: 2px solid #22c55e; color: #fff; box-shadow: 0 0 20px 5px rgb(34 197 94 / 0.4);
         }
         .impact-card .flip-card-back.incorrect {
-            background-color: #991b1b; /* red-800 */
-            border: 2px solid #ef4444; /* red-500 */
-            color: #fff;
+            background-color: #991b1b; border: 2px solid #ef4444; color: #fff;
         }
         .impact-card .feedback-icon {
-             width: 3rem; /* 48px */
-             height: 3rem; /* 48px */
-             margin-top: 0.5rem;
+            width: 2.5rem; height: 2.5rem; margin-top: 0.5rem;
         }
 
-
-        /* Controls */
+        /* Controles */
         #controls-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 100;
             transition: opacity 0.3s;
         }
-        #presentation-container:fullscreen #controls-container {
-             opacity: 0;
-        }
-         #presentation-container:fullscreen:hover #controls-container {
-             opacity: 1;
-        }
-        .controls { @apply bg-white/80 backdrop-blur-sm shadow-2xl p-2 rounded-full flex items-center justify-center gap-2; }
-        .control-btn { @apply text-slate-700 hover:bg-slate-200 rounded-full p-3 transition-colors duration-300 disabled:opacity-30 disabled:hover:bg-transparent; }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            /* CAMBIO: Se ajusta la fuente base para tabletas para una mejor visualización. */
-            html {
-                font-size: 110%;
+        @media (min-width: 768px) {
+             #controls-container {
+                left: auto;
+                right: 20px;
+                bottom: 20px;
+                transform: none;
             }
-            .slide { padding: 2rem; }
-            /* CAMBIO: Se eliminan los tamaños de fuente fijos para mantener la consistencia. */
-            .flip-card { height: 250px; }
         }
-         @media (max-width: 768px) {
-            /* CAMBIO: Se restablece la fuente base para móviles. */
-            html {
-                font-size: 100%;
-            }
-            /* CAMBIO: Se eliminan los tamaños de fuente fijos. */
-            .grid-cols-4, .grid-cols-3, .grid-cols-2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-            .flip-card { height: auto; min-height: 220px;}
-         }
+        #presentation-container:fullscreen #controls-container { opacity: 0; }
+        #presentation-container:fullscreen:hover #controls-container { opacity: 1; }
+        .controls { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 0.5rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .control-btn { color: #334155; border-radius: 9999px; padding: 0.5rem; transition: background-color 0.3s, color 0.3s; }
+        .control-btn:hover { background-color: #e2e8f0; }
+        .control-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .control-btn:disabled:hover { background-color: transparent; }
+        .control-btn svg { width: 1.5rem; height: 1.5rem; }
+        @media (min-width: 768px) {
+            .control-btn { padding: 0.75rem; }
+            .control-btn svg { width: 2rem; height: 2rem; }
+        }
+        #slide-counter { font-size: 1rem; font-weight: 700; color: #334155; width: 4.5rem; text-align: center; }
+        @media (min-width: 768px) {
+            #slide-counter { font-size: 1.25rem; width: 7rem; }
+        }
     </style>
 </head>
 <body class="bg-slate-900">
 
     <div id="presentation-container">
         <!-- Slides Wrapper -->
-        <main id="slides-wrapper" class="flex-grow w-full h-full relative overflow-hidden shadow-2xl">
+        <main id="slides-wrapper">
             <!-- Slide 1: Cover -->
             <div class="slide active bg-slate-900 text-white" data-slide="1">
-                <div class="text-center w-full">
-                    <div class="mx-auto mb-8 animate-fade-in">
-                        <img src="image/logo1.png" alt="Logo personal" class="w-48 h-48 object-contain mx-auto">
-                    </div>
-
-
-
-
-                    <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">Creación de Recursos Educativos y Presentaciones de Alto Impacto</h1>
-                    <p class="text-2xl md:text-3xl text-slate-300 mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">Estrategias pedagógicas, herramientas digitales e IA</p>
-                    <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
-                        <p class="text-4xl font-bold text-white">Mgtr. Edir Gonzano</p>
-                        <p class="text-2xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
-                    </div>
+            <div class="text-center w-full">
+                <div class="mx-auto mb-6 md:mb-8 animate-fade-in">
+                <img src="image/logo.png" alt="Logo personal" class="w-32 h-32 md:w-48 md:h-48 object-contain mx-auto">
+                </div>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                Creación de Recursos Educativos y Presentaciones de Alto Impacto
+                </h1>
+                <p class="text-lg sm:text-xl md:text-2xl text-slate-300 mb-8 md:mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+                Estrategias pedagógicas, herramientas digitales e IA
+                </p>
+                <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+                <p class="text-2xl md:text-4xl font-bold text-white">Mgtr. Edir Gonzano</p>
+                <p class="text-lg md:text-2xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
                 </div>
             </div>
+            </div>
+
 
             <!-- Slide 2: Intro -->
             <div class="slide" data-slide="2">
                 <div class="w-full">
-                    <h2 class="text-6xl md:text-7xl font-extrabold text-slate-800 mb-4 animate-fade-in-up">La Innovación es un <span class="text-indigo-600">Imperativo</span> 🚀</h2>
-                    <div class="w-24 h-2 bg-indigo-600 my-8 animate-expand"></div>
-                    <p class="text-3xl md:text-4xl text-slate-600 max-w-5xl leading-relaxed animate-fade-in-up" style="animation-delay: 0.3s;">En la educación actual, los <strong class="font-semibold text-slate-800">recursos multimedia</strong> son esenciales. El éxito radica en un diseño <strong class="font-semibold text-slate-800">arraigado</strong> en la ciencia de cómo aprendemos.</p>
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800 mb-4 animate-fade-in-up">La Innovación es un <span class="text-indigo-600">Imperativo</span> 🚀</h2>
+                    <div class="w-20 h-2 bg-indigo-600 my-6 md:my-8 animate-expand"></div>
+                    <p class="text-xl sm:text-2xl md:text-3xl text-slate-600 max-w-5xl leading-relaxed animate-fade-in-up" style="animation-delay: 0.3s;">En la educación actual, los <strong class="font-semibold text-slate-800">recursos multimedia</strong> son esenciales. El éxito radica en un diseño <strong class="font-semibold text-slate-800">arraigado</strong> en la ciencia de cómo aprendemos.</p>
                 </div>
             </div>
             
             <!-- Slide 3: Section I Title -->
             <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="3">
                 <div class="text-center w-full">
-                    <p class="text-3xl text-indigo-400 font-semibold animate-fade-in">Sección I</p>
-                    <h2 class="text-7xl md:text-8xl font-black mt-4 animate-fade-in-up">Fundamentos Cognitivos y Pedagógicos</h2>
+                    <p class="text-xl md:text-3xl text-indigo-400 font-semibold animate-fade-in">Sección I</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">Fundamentos Cognitivos y Pedagógicos</h2>
                 </div>
             </div>
 
             <!-- Slide 4: TCAM Intro -->
             <div class="slide" data-slide="4">
-            <div class="w-full">
-                <h2 class="text-5xl md:text-6xl font-extrabold text-slate-800 mb-2 animate-fade-in-up">
-                La <span class="text-indigo-600">Teoría Cognitiva</span> del Aprendizaje Multimedia
-                </h2>
-                <h3 class="text-2xl font-semibold text-indigo-600 mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                Por Richard Mayer
-                </h3>
-
-                <!-- Imagen local con tamaño controlado por porcentaje -->
-                <div class="text-center animate-fade-in-up" style="animation-delay: 0.4s;">
-                <img src="image/modelo3.png" alt="Diagrama TCAM" style="width: 80%; height: auto;" class="rounded-lg mx-auto shadow-xl border">
-                <p class="text-xl text-slate-500 mt-3">
-                    Modelo del proceso de aprendizaje multimedia (Adaptado de Mayer, 2010 y Sorden, 2012).
-                </p>
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 mb-2 animate-fade-in-up">
+                    La <span class="text-indigo-600">Teoría Cognitiva</span> del Aprendizaje Multimedia
+                    </h2>
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-600 mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    Por Richard Mayer
+                    </h3>
+                    <div class="text-center animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <img src="image/modelo3.png" alt="Diagrama TCAM" class="w-full max-w-4xl h-auto rounded-lg mx-auto shadow-xl border">
+                    <p class="text-sm md:text-base text-slate-500 mt-3">
+                        Modelo del proceso de aprendizaje multimedia (Adaptado de Mayer, 2010 y Sorden, 2012).
+                    </p>
+                    </div>
                 </div>
-            </div>
             </div>
 
 
             <!-- Slide 5: 3 Supuestos de TCAM -->
             <div class="slide" data-slide="5">
-                 <div class="w-full text-center">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-10 text-center">Los 3 Pilares del Aprendizaje Multimedia</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
-                        <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-indigo-500 text-center">
-                            <h3 class="font-bold text-slate-800 text-4xl mb-4">👁️ Doble Canal 👂</h3>
-                            <p class="text-xl text-slate-600">Procesamos por vías separadas lo que <strong class="font-semibold">vemos</strong> y lo que <strong class="font-semibold">oímos</strong>.</p>
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-10">Los 3 Pilares del Aprendizaje Multimedia</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 stagger-children">
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border-t-8 border-indigo-500">
+                            <h3 class="font-bold text-slate-800 text-2xl md:text-3xl mb-4">👁️ Doble Canal 👂</h3>
+                            <p class="text-base md:text-xl text-slate-600">Procesamos por vías separadas lo que <strong class="font-semibold">vemos</strong> y lo que <strong class="font-semibold">oímos</strong>.</p>
                         </div>
-                        <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-teal-500 text-center">
-                            <h3 class="font-bold text-slate-800 text-4xl mb-4">📦 Capacidad Limitada</h3>
-                            <p class="text-xl text-slate-600">Nuestra mente solo puede procesar <strong class="font-semibold">un poco de información</strong> a la vez en cada canal.</p>
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border-t-8 border-teal-500">
+                            <h3 class="font-bold text-slate-800 text-2xl md:text-3xl mb-4">📦 Capacidad Limitada</h3>
+                            <p class="text-base md:text-xl text-slate-600">Nuestra mente solo puede procesar <strong class="font-semibold">un poco de información</strong> a la vez.</p>
                         </div>
-                        <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-amber-500 text-center">
-                            <h3 class="font-bold text-slate-800 text-4xl mb-4">🧱 Procesamiento Activo</h3>
-                            <p class="text-xl text-slate-600">Aprender no es recibir, es <strong class="font-semibold">construir activamente</strong> el conocimiento.</p>
+                        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border-t-8 border-amber-500">
+                            <h3 class="font-bold text-slate-800 text-2xl md:text-3xl mb-4">🧱 Procesamiento Activo</h3>
+                            <p class="text-base md:text-xl text-slate-600">Aprender no es recibir, es <strong class="font-semibold">construir activamente</strong> el conocimiento.</p>
                         </div>
                     </div>
                 </div>
@@ -287,16 +270,22 @@
             <!-- Slide 6: Carga Cognitiva -->
             <div class="slide" data-slide="6">
                 <div class="w-full text-center">
-                    <h2 class="text-6xl font-extrabold text-slate-800 text-center">El Objetivo: Gestionar la Carga Cognitiva</h2>
-                    <div class="grid grid-cols-3 gap-8 mt-12 stagger-children">
-                         <div class="bg-red-100 p-6 rounded-2xl text-center">
-                            <h3 class="font-bold text-red-800 text-3xl">Extrínseca</h3><p class="mt-2 text-red-700 text-xl">El "ruido". Mal diseño que distrae.</p><strong class="font-bold block mt-4 text-5xl text-red-800">REDUCIR</strong>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800">Gestionar la Carga Cognitiva</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-10 md:mt-12 stagger-children">
+                        <div class="bg-red-100 p-6 rounded-2xl">
+                            <h3 class="font-bold text-red-800 text-2xl md:text-3xl">Extrínseca</h3>
+                            <p class="mt-2 text-red-700 text-base md:text-xl">El "ruido". Mal diseño que distrae.</p>
+                            <strong class="font-bold block mt-4 text-3xl md:text-5xl text-red-800">REDUCIR</strong>
                         </div>
-                         <div class="bg-amber-100 p-6 rounded-2xl text-center">
-                            <h3 class="font-bold text-amber-800 text-3xl">Intrínseca</h3><p class="mt-2 text-amber-700 text-xl">La dificultad del tema.</p><strong class="font-bold block mt-4 text-5xl text-amber-800">GESTIONAR</strong>
+                        <div class="bg-amber-100 p-6 rounded-2xl">
+                            <h3 class="font-bold text-amber-800 text-2xl md:text-3xl">Intrínseca</h3>
+                            <p class="mt-2 text-amber-700 text-base md:text-xl">La dificultad del tema.</p>
+                            <strong class="font-bold block mt-4 text-3xl md:text-5xl text-amber-800">GESTIONAR</strong>
                         </div>
-                         <div class="bg-green-100 p-6 rounded-2xl text-center">
-                            <h3 class="font-bold text-green-800 text-3xl">Generativa</h3><p class="mt-2 text-green-700 text-xl">El esfuerzo para entender.</p><strong class="font-bold block mt-4 text-5xl text-green-800">FOMENTAR</strong>
+                        <div class="bg-green-100 p-6 rounded-2xl">
+                            <h3 class="font-bold text-green-800 text-2xl md:text-3xl">Generativa</h3>
+                            <p class="mt-2 text-green-700 text-base md:text-xl">El esfuerzo para entender.</p>
+                            <strong class="font-bold block mt-4 text-3xl md:text-5xl text-green-800">FOMENTAR</strong>
                         </div>
                     </div>
                 </div>
@@ -343,54 +332,18 @@
             </div>
             </div>
 
-            <!-- Slide 8: Trivia Carga Cognitiva -->
-            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="31">
-                <div class="w-full max-w-5xl mx-auto text-center">
-                    <p class="text-2xl font-bold text-indigo-400">Trivia Interactiva (1/5)</p>
-                    <h2 class="text-6xl font-extrabold my-8">Añadir música de fondo irrelevante a una lección, ¿qué tipo de carga aumenta?</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-                        <!-- Opción 1 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Ninguna.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Opción 3 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Generativa.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 4 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Intrínseca.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Opción 2 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Extrínseca.</div>
-                                <div class="flip-card-back correct">
-                                    <p class="text-4xl font-bold">¡Correcto!</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </div>
-                        </div>
+
+            <!-- Slide 8: Trivia Carga Cognitiva -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="8">
+                <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Interactiva (1/5)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">Añadir música de fondo irrelevante a una lección, ¿qué tipo de carga aumenta?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Extrínseca.</div><div class="flip-card-back correct"><p class="text-2xl md:text-4xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Intrínseca.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Generativa.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Ninguna.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
                     </div>
                 </div>
             </div>
@@ -398,48 +351,12 @@
             <!-- Slide 9: Principios 1 (Flip Cards) -->
             <div class="slide" data-slide="9">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-8 text-center">Principios Clave (1/2)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Coherencia</h3>
-                                </div>
-                                <div class="flip-card-back bg-indigo-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Elimina todo lo irrelevante. <strong class="font-bold">¡Menos es más!</strong></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Señalización</h3>
-                                </div>
-                                <div class="flip-card-back bg-indigo-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Usa <strong class="font-bold">pistas visuales</strong> para guiar la atención a lo importante.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Redundancia</h3>
-                                </div>
-                                <div class="flip-card-back bg-indigo-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Prefiere <strong class="font-bold">gráficos + narración</strong>. Evita narrar y mostrar el mismo texto.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Contigüidad</h3>
-                                </div>
-                                <div class="flip-card-back bg-indigo-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Presenta texto e imágenes relacionadas <strong class="font-bold">cerca y al mismo tiempo.</strong></p>
-                                </div>
-                            </div>
-                        </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-8 text-center">Principios Clave (1/2)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Coherencia</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Elimina todo lo irrelevante. <strong class="font-bold">¡Menos es más!</strong></p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Señalización</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Usa <strong class="font-bold">pistas visuales</strong> para guiar la atención.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Redundancia</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Prefiere <strong class="font-bold">gráficos + narración</strong>, no texto + narración.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-indigo-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Contigüidad</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Presenta texto e imágenes <strong class="font-bold">cerca y al mismo tiempo.</strong></p></div></div></div>
                     </div>
                 </div>
             </div>
@@ -447,64 +364,28 @@
             <!-- Slide 10: Principios 2 (Flip Cards) -->
             <div class="slide" data-slide="10">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-8 text-center">Principios Clave (2/2)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-teal-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Segmentación</h3>
-                                </div>
-                                <div class="flip-card-back bg-teal-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Divide la lección en <strong class="font-bold">partes más pequeñas</strong> y manejables.</p>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-teal-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Pre-entrenamiento</h3>
-                                </div>
-                                <div class="flip-card-back bg-teal-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Presenta los <strong class="font-bold">conceptos clave ANTES</strong> de la lección principal.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-amber-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio Multimedia y Voz</h3>
-                                </div>
-                                <div class="flip-card-back bg-amber-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Aprendemos mejor con <strong class="font-bold">imágenes + voz humana</strong> que solo con texto.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front bg-white shadow-xl border-t-8 border-amber-500">
-                                    <h3 class="font-bold text-4xl text-slate-800">Principio de Personalización</h3>
-                                </div>
-                                <div class="flip-card-back bg-amber-600 text-white shadow-xl">
-                                    <p class="text-2xl leading-relaxed">Usa un <strong class="font-bold">tono conversacional y directo</strong> ("tú", "nosotros").</p>
-                                </div>
-                            </div>
-                        </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-8 text-center">Principios Clave (2/2)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-teal-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Segmentación</h3></div><div class="flip-card-back bg-teal-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Divide la lección en <strong class="font-bold">partes pequeñas</strong> y manejables.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-teal-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Pre-entrenamiento</h3></div><div class="flip-card-back bg-teal-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Presenta los <strong class="font-bold">conceptos clave ANTES</strong> de la lección.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-amber-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio Multimedia y Voz</h3></div><div class="flip-card-back bg-amber-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Aprendemos mejor con <strong class="font-bold">imágenes + voz humana</strong> que solo con texto.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl border-t-8 border-amber-500"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Principio de Personalización</h3></div><div class="flip-card-back bg-amber-600 text-white shadow-xl"><p class="text-lg md:text-2xl leading-relaxed">Usa un <strong class="font-bold">tono conversacional y directo</strong> ("tú", "nosotros").</p></div></div></div>
                     </div>
                 </div>
             </div>
             
-            <!-- NEW Slide 11: REA & TAM -->
+            <!-- Slide 11: REA & TAM -->
             <div class="slide" data-slide="11">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800">Ampliando el Panorama</h2>
-                    <div class="grid grid-cols-2 gap-8 mt-10 text-2xl leading-relaxed stagger-children">
-                         <div class="bg-blue-100 p-8 rounded-2xl">
-                            <h3 class="font-bold text-4xl text-blue-800 mb-4">REA 🌐</h3>
-                            <p>Los <strong class="font-semibold">Recursos Educativos Abiertos</strong> democratizan el acceso al conocimiento y fomentan la colaboración.</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800">Ampliando el Panorama</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 stagger-children">
+                        <div class="bg-blue-100 p-6 md:p-8 rounded-2xl">
+                            <h3 class="font-bold text-2xl md:text-4xl text-blue-800 mb-4">REA 🌐</h3>
+                            <p class="text-lg md:text-2xl leading-relaxed">Los <strong class="font-semibold">Recursos Educativos Abiertos</strong> democratizan el acceso al conocimiento y fomentan la colaboración.</p>
                         </div>
-                         <div class="bg-green-100 p-8 rounded-2xl">
-                            <h3 class="font-bold text-4xl text-green-800 mb-4">TAM 💻</h3>
-                            <p>El <strong class="font-semibold">Modelo de Aceptación Tecnológica</strong> nos recuerda que la utilidad y facilidad de uso son clave para la adopción.</p>
+                        <div class="bg-green-100 p-6 md:p-8 rounded-2xl">
+                            <h3 class="font-bold text-2xl md:text-4xl text-green-800 mb-4">TAM 💻</h3>
+                            <p class="text-lg md:text-2xl leading-relaxed">El <strong class="font-semibold">Modelo de Aceptación Tecnológica</strong> recuerda que utilidad y facilidad son clave para la adopción.</p>
                         </div>
                     </div>
                 </div>
@@ -512,24 +393,24 @@
 
             <!-- Slide 12: Section II Title -->
             <div class="slide bg-gradient-to-br from-teal-600 to-green-800 text-white" data-slide="12">
-                 <div class="text-center w-full">
-                    <p class="text-3xl text-teal-200 font-semibold animate-fade-in">Sección II</p>
-                    <h2 class="text-7xl md:text-8xl font-black mt-4 animate-fade-in-up">Presentaciones de Alto Impacto</h2>
+                <div class="text-center w-full">
+                    <p class="text-xl md:text-3xl text-teal-200 font-semibold animate-fade-in">Sección II</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">Presentaciones de Alto Impacto</h2>
                 </div>
             </div>
             
             <!-- Slide 13: Enfoque A-E -->
             <div class="slide" data-slide="13">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800">La Solución: Enfoque <span class="text-indigo-600">Aserción-Evidencia</span></h2>
-                     <div class="grid grid-cols-2 gap-8 mt-10 text-2xl leading-relaxed stagger-children">
-                         <div class="bg-indigo-100 p-8 rounded-2xl">
-                            <h3 class="font-bold text-4xl text-indigo-800 mb-4">Aserción 🗣️</h3>
-                            <p>El titular es una <strong class="font-semibold">oración completa y afirmativa</strong> que resume el mensaje clave.</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800">La Solución: Enfoque <span class="text-indigo-600">Aserción-Evidencia</span></h2>
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 stagger-children">
+                        <div class="bg-indigo-100 p-6 md:p-8 rounded-2xl">
+                            <h3 class="font-bold text-2xl md:text-4xl text-indigo-800 mb-4">Aserción 🗣️</h3>
+                            <p class="text-lg md:text-2xl leading-relaxed">El titular es una <strong class="font-semibold">oración completa y afirmativa</strong> que resume el mensaje clave.</p>
                         </div>
-                         <div class="bg-slate-800 text-white p-8 rounded-2xl">
-                            <h3 class="font-bold text-4xl text-white mb-4">Evidencia 📊</h3>
-                            <p>El cuerpo es <strong class="font-semibold">evidencia visual</strong> (gráficos, imágenes) que soporta la aserción. <strong class="font-semibold">Nunca viñetas.</strong></p>
+                        <div class="bg-slate-800 text-white p-6 md:p-8 rounded-2xl">
+                            <h3 class="font-bold text-2xl md:text-4xl text-white mb-4">Evidencia 📊</h3>
+                            <p class="text-lg md:text-2xl leading-relaxed">El cuerpo es <strong class="font-semibold">evidencia visual</strong> (gráficos, imágenes) que soporta la aserción. <strong class="font-semibold">Nunca viñetas.</strong></p>
                         </div>
                     </div>
                 </div>
@@ -537,462 +418,252 @@
             
             <!-- Slide 14: Ejemplo A-E -->
             <div class="slide" data-slide="14">
-                <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 text-center mb-8">Demostración: Aserción-Evidencia</h2>
+            <div class="w-full">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 text-center mb-8">
+                Demostración: Aserción-Evidencia
+                </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
 
-                        <!-- Lado izquierdo: Formato tradicional con texto -->
-                        <div class="text-center">
-                            <h3 class="text-3xl font-bold text-red-600 mb-4">❌ Formato Tradicional (Ineficaz)</h3>
-                            <div class="bg-white p-6 border-4 border-red-500 rounded-xl shadow-lg">
-                                <ul class="text-left text-slate-700 text-lg list-disc list-inside">
-                                    <li>Incremento en ventas</li>
-                                    <li>Campaña exitosa</li>
-                                    <li>Nuevos clientes</li>
-                                </ul>
-                            </div>
-                            <p class="mt-2 text-slate-600 text-lg">Viñetas genéricas sin contexto dificultan la comprensión y retención.</p>
-                        </div>
+                <!-- Panel tradicional con texto arriba y gráfico abajo -->
+            <div class="text-center">
+            <h3 class="text-xl md:text-3xl font-bold text-red-600 mb-4">❌ Formato Tradicional</h3>
+            <div class="bg-white p-6 border-4 border-red-500 rounded-xl shadow-lg h-full flex flex-col gap-4 items-center">
+                
+                <!-- Texto explicativo arriba -->
+                <p class="text-red-700 font-semibold text-base md:text-xl text-center leading-tight">
+                Se reporta incremento en ventas, campaña exitosa y nuevos clientes durante el tercer trimestre.
+                </p>
 
-                        <!-- Lado derecho: Enfoque A-E con aserción + imagen -->
-                        <div class="text-center">
-                            <h3 class="text-3xl font-bold text-green-600 mb-4">✅ Enfoque A-E (Eficaz)</h3>
-                            <div class="bg-white p-6 border-4 border-green-500 rounded-xl shadow-lg flex flex-col gap-4">
-                                <!-- Aserción -->
-                                <p class="text-blue-700 font-bold text-xl text-center leading-tight">
-                                    Las ventas aumentaron un 15% gracias a la nueva campaña de marketing.
-                                </p>
-                                <!-- Evidencia visual -->
-                                <img src="image/barras.png" style="max-height: 650px; width: 100%; height: auto;">
-
-
-                            </div>
-                            <p class="mt-2 text-slate-600 text-lg">Una afirmación clara respaldada por evidencia visual mejora la retención del contenido.</p>
-                        </div>
-
-                    </div>
-                </div>
+                <!-- Imagen abajo -->
+                <img src="image/tabla1.png" alt="Gráfico tradicional" class="w-full h-auto object-contain rounded-lg border border-slate-300">
+            </div>
             </div>
 
-            <!-- UPDATED Slide 15: Narrative Arc -->
+
+                <!-- Panel Aserción-Evidencia -->
+                <div class="text-center">
+                    <h3 class="text-xl md:text-3xl font-bold text-green-600 mb-4">✅ Enfoque A-E</h3>
+                    <div class="bg-white p-4 border-4 border-green-500 rounded-xl shadow-lg flex flex-col gap-4 h-full">
+                    <p class="text-blue-700 font-bold text-base md:text-xl text-center leading-tight">
+                        Las ventas aumentaron un 15% gracias a la nueva campaña de marketing.
+                    </p>
+                    <img src="image/barras.png" alt="Gráfico de barras" class="w-full h-auto flex-grow object-contain">
+                    </div>
+                </div>
+
+                </div>
+            </div>
+            </div>
+
+            <!-- Slide 15: Narrative Arc -->
             <div class="slide" data-slide="15">
                 <div class="w-full text-center">
-                    <h2 class="text-6xl font-extrabold text-slate-800 text-center mb-10">El Poder de la Narrativa 📈</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-10">El Poder de la Narrativa 📈</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
                         <div class="flex flex-col items-center p-4 stagger-children">
-                            <img src="https://img.icons8.com/plasticine/100/rocket.png" alt="Icono de Inicio" class="mb-4 h-24 w-24">
-                            <h3 class="text-4xl font-bold text-slate-700 mb-2">Inicio</h3>
-                            <p class="text-xl text-slate-600">Presenta un problema o una pregunta intrigante para captar la atención desde el primer momento.</p>
+                            <img src="https://img.icons8.com/plasticine/100/rocket.png" alt="Icono de Inicio" class="mb-4 h-20 w-20 md:h-24 md:w-24">
+                            <h3 class="text-2xl md:text-4xl font-bold text-slate-700 mb-2">Inicio</h3>
+                            <p class="text-base md:text-xl text-slate-600">Presenta un problema o una pregunta intrigante para captar la atención.</p>
                         </div>
                         <div class="flex flex-col items-center p-4 stagger-children" style="animation-delay: 0.2s;">
-                            <img src="https://img.icons8.com/plasticine/100/000000/mind-map.png" alt="Icono de Nudo" class="mb-4 h-24 w-24">
-                            <h3 class="text-4xl font-bold text-slate-700 mb-2">Nudo</h3>
-                            <p class="text-xl text-slate-600">Desarrolla tu idea principal con datos y ejemplos que construyan la tensión y el interés.</p>
+                            <img src="https://img.icons8.com/plasticine/100/000000/mind-map.png" alt="Icono de Nudo" class="mb-4 h-20 w-20 md:h-24 md:w-24">
+                            <h3 class="text-2xl md:text-4xl font-bold text-slate-700 mb-2">Nudo</h3>
+                            <p class="text-base md:text-xl text-slate-600">Desarrolla tu idea con datos y ejemplos que construyan el interés.</p>
                         </div>
                         <div class="flex flex-col items-center p-4 stagger-children" style="animation-delay: 0.4s;">
-                            <img src="https://img.icons8.com/plasticine/100/000000/light.png" alt="Icono de Desenlace" class="mb-4 h-24 w-24">
-                            <h3 class="text-4xl font-bold text-slate-700 mb-2">Desenlace</h3>
-                            <p class="text-xl text-slate-600">Concluye con una solución clara o una llamada a la acción que deje una impresión duradera.</p>
+                            <img src="https://img.icons8.com/plasticine/100/000000/light.png" alt="Icono de Desenlace" class="mb-4 h-20 w-20 md:h-24 md:w-24">
+                            <h3 class="text-2xl md:text-4xl font-bold text-slate-700 mb-2">Desenlace</h3>
+                            <p class="text-base md:text-xl text-slate-600">Concluye con una solución o una llamada a la acción memorable.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="31">
-                <div class="w-full max-w-5xl mx-auto text-center">
-                    <p class="text-2xl font-bold text-indigo-400">Trivia Interactiva (2/5)</p>
-                    <h2 class="text-6xl font-extrabold my-8">En el enfoque Aserción-Evidencia, ¿qué elemento NUNCA debería estar en el cuerpo de la diapositiva?</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-                        <!-- Opción 1 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Un gráfico de barras.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Opción 3 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Una imagen de alta calidad.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 4 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Una cita textual sin contexto.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Opción 2 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Listas con viñetas o parrafos.</div>
-                                <div class="flip-card-back correct">
-                                    <p class="text-4xl font-bold">¡Correcto!</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Slide 16: Trivia A-E -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="16">
+                 <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Interactiva (2/5)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">En el enfoque Aserción-Evidencia, ¿qué elemento NUNCA debería estar en el cuerpo de la diapositiva?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Listas con viñetas o párrafos.</div><div class="flip-card-back correct"><p class="text-2xl md:text-4xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Un gráfico de barras.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Una imagen de alta calidad.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Una cita textual de una fuente.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
                     </div>
                 </div>
             </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-            <!-- NEW Slides 17-20: Visual Design Principles -->
-            <div class="slide" data-slide="17"><div class="text-center w-full"><h2 class="text-7xl font-extrabold text-slate-800 text-center">Principio Visual 1: <span class="text-indigo-600">Simplicidad</span><p class="text-3xl mt-6 font-medium">El espacio en blanco es tu amigo. Una idea por diapositiva.</p></h2></div></div>
-            <div class="slide" data-slide="18"><div class="text-center w-full"><h2 class="text-7xl font-extrabold text-slate-800 text-center">Principio Visual 2: <span class="text-indigo-600">Tipografía</span><p class="text-3xl mt-6 font-medium">Grande, clara y legible. Mínimo 30-40 puntos.</p></h2></div></div>
-            <div class="slide" data-slide="19"><div class="text-center w-full"><h2 class="text-7xl font-extrabold text-slate-800 text-center">Principio Visual 3: <span class="text-indigo-600">Contraste</span><p class="text-3xl mt-6 font-medium">Alto contraste entre texto y fondo es innegociable.</p></h2></div></div>
-            <div class="slide" data-slide="20"><div class="text-center w-full"><h2 class="text-7xl font-extrabold text-slate-800 text-center">Principio Visual 4: <span class="text-indigo-600">Imágenes con Propósito</span><p class="text-3xl mt-6 font-medium">Usa visuales de alta calidad para clarificar, no para decorar.</p></h2></div></div>
+            <!-- Slides 17-20: Visual Design Principles -->
+            <div class="slide" data-slide="17"><div class="text-center w-full"><h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800">Principio Visual 1: <span class="text-indigo-600">Simplicidad</span><p class="text-xl md:text-3xl mt-6 font-medium text-slate-600">El espacio en blanco es tu amigo. Una idea por diapositiva.</p></h2></div></div>
+            <div class="slide" data-slide="18"><div class="text-center w-full"><h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800">Principio Visual 2: <span class="text-indigo-600">Tipografía</span><p class="text-xl md:text-3xl mt-6 font-medium text-slate-600">Grande, clara y legible. Mínimo 30-40 puntos.</p></h2></div></div>
+            <div class="slide" data-slide="19"><div class="text-center w-full"><h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800">Principio Visual 3: <span class="text-indigo-600">Contraste</span><p class="text-xl md:text-3xl mt-6 font-medium text-slate-600">Alto contraste entre texto y fondo es innegociable.</p></h2></div></div>
+            <div class="slide" data-slide="20"><div class="text-center w-full"><h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800">Principio Visual 4: <span class="text-indigo-600">Imágenes</span><p class="text-xl md:text-3xl mt-6 font-medium text-slate-600">Usa visuales de alta calidad para clarificar, no para decorar.</p></h2></div></div>
             
-            <!-- NEW Slide 21: Accessibility -->
+            <!-- Slide 21: Accessibility -->
             <div class="slide" data-slide="21">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800">La Accesibilidad es Clave 🛠️</h2>
-                    <ul class="text-4xl space-y-8 list-disc list-inside mt-10 text-slate-700 stagger-children">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">La Accesibilidad es Clave 🛠️</h2>
+                    <ul class="text-xl md:text-3xl lg:text-4xl space-y-6 md:space-y-8 list-disc list-inside mt-10 text-slate-700 stagger-children">
                         <li>Usa <strong class="font-semibold">texto alternativo</strong> en todas las imágenes.</li>
                         <li>Asegura un <strong class="font-semibold">alto contraste</strong> de color.</li>
-                        <li>Proporciona <strong class="font-semibold">transcripciones o subtítulos</strong> para videos.</li>
+                        <li>Proporciona <strong class="font-semibold">subtítulos</strong> para videos.</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Slide 22: Section III/V Title -->
+            <!-- Slide 22: Section III/IV/V Title -->
             <div class="slide bg-gradient-to-br from-purple-700 to-violet-900 text-white" data-slide="22">
-                 <div class="text-center w-full">
-                    <p class="text-3xl text-purple-200 font-semibold animate-fade-in">Sección III, IV y V</p>
-                    <h2 class="text-7xl md:text-8xl font-black mt-4 animate-fade-in-up">Ecosistema de Herramientas</h2>
+                <div class="text-center w-full">
+                    <p class="text-xl md:text-3xl text-purple-200 font-semibold animate-fade-in">Sección III, IV y V</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">Ecosistema de Herramientas</h2>
                 </div>
             </div>
             
-            <!-- NEW Slide 23: Traditional Tools (Interactive) -->
+            <!-- Slide 23: Herramientas de autoría -->
             <div class="slide" data-slide="23">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-8 text-center">
-                        Herramientas de <span class="text-pink-500">autoría educativa</span>
-                    </h2>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Articulate 360</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-xl">Estándar para cursos eLearning complejos, simulaciones y escenarios ramificados.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Genially</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-xl">Líder en contenido interactivo. Enriquece recursos con animación y gamificación.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">H5P</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-xl">Framework gratuito para crear +40 tipos de contenido interactivo, ideal para LMS.</p></div></div>
-                        </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-8 text-center">Herramientas de <span class="text-pink-500">autoría educativa</span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Articulate 360</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-lg md:text-xl">Estándar para cursos eLearning complejos y simulaciones.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Genially</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-lg md:text-xl">Líder en contenido interactivo con animación y gamificación.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">H5P</h3></div><div class="flip-card-back bg-slate-800 text-white shadow-xl"><p class="text-lg md:text-xl">Framework gratuito para crear +40 tipos de contenido interactivo.</p></div></div></div>
                     </div>
                 </div>
             </div>
 
-             <!-- NEW Slide 24: AI Presentation Tools (Interactive) -->
+             <!-- Slide 24: AI Presentation Tools -->
             <div class="slide" data-slide="24">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-8 text-center">
-                        Herramientas de <span class="text-pink-500">Presentación con IA</span>
-                    </h2>
-
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Beautiful.ai</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-xl">La IA aplica reglas de buen diseño para mantener la coherencia y estética automáticamente.</p></div></div>
-                        </div>
-                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Tome</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-xl">Enfocado en storytelling digital para crear narrativas inmersivas y fluidas con IA.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Gamma</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-xl">Versátil para crear presentaciones, webs y documentos, incrustando contenido interactivo.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Canva</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-xl">Su función "Magic Design" convierte texto en una presentación visual con un solo clic.</p></div></div>
-                        </div>
-                     </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-8 text-center">Herramientas de <span class="text-pink-500">Presentación con IA</span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Beautiful.ai</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-xl">La IA aplica reglas de buen diseño para mantener la coherencia.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Tome</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-xl">Enfocado en storytelling para crear narrativas inmersivas.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Gamma</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-xl">Versátil para crear presentaciones, webs y documentos.</p></div></div></div>
+                         <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Canva</h3></div><div class="flip-card-back bg-indigo-600 text-white shadow-xl"><p class="text-lg md:text-xl">Su función "Magic Design" convierte texto en presentación.</p></div></div></div>
+                    </div>
                 </div>
             </div>
             
-            <!-- NEW Slide 25: AI Assistants (Interactive) -->
+            <!-- Slide 25: AI Assistants -->
             <div class="slide" data-slide="25">
                 <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 mb-8 text-center">
-                        Asistentes de <span class="text-pink-500">IA para Creación</span> 
-                    </h2>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Gemini / Notebook</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-xl">Ideal para razonar, generar texto, código e ideas creativas y estructurar contenido.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">ChatGPT</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-xl">Perfecto para generar borradores, resumir textos y explorar ideas rápidamente.</p></div></div>
-                        </div>
-                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-4xl text-slate-800">Perplexity</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-xl">Motor de búsqueda conversacional que da respuestas directas con citas, excelente para investigación.</p></div></div>
-                        </div>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-8 text-center">Asistentes de <span class="text-pink-500">IA para Creación</span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Gemini / Notebook</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-lg md:text-xl">Ideal para razonar, generar texto, código e ideas creativas.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">ChatGPT</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-lg md:text-xl">Perfecto para generar borradores, resumir textos y explorar ideas.</p></div></div></div>
+                        <div class="flip-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-xl"><h3 class="font-bold text-2xl md:text-3xl text-slate-800">Perplexity</h3></div><div class="flip-card-back bg-purple-600 text-white shadow-xl"><p class="text-lg md:text-xl">Motor de búsqueda conversacional que da respuestas con citas.</p></div></div></div>
                     </div>
                 </div>
             </div>
 
-              <!-- Slide 26: Desafíos IA -->
-             <div class="slide" data-slide="26">
-                  <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800 text-center mb-8">
-                        Desafíos <span class="text-red-600">Críticos</span> de la IA ⚠️
-                    </h2>
-
-                    <ul class="text-4xl space-y-8 list-disc list-inside mt-10 text-slate-700 stagger-children">
-                            <li>Precisión y "alucinaciones"</li>
-                            <li>Sesgos inherentes en los datos</li>
-                            <li>Privacidad de datos del estudiante</li>
-                            <li>Deshumanización del proceso educativo</li>
+            <!-- Slide 26: Desafíos IA -->
+            <div class="slide" data-slide="26">
+                <div class="w-full">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800 mb-8">Desafíos <span class="text-red-600">Críticos</span> de la IA ⚠️</h2>
+                    <ul class="text-xl md:text-3xl lg:text-4xl space-y-6 md:space-y-8 list-disc list-inside text-slate-700 stagger-children">
+                        <li>Precisión y "alucinaciones"</li>
+                        <li>Sesgos inherentes en los datos</li>
+                        <li>Privacidad de datos del estudiante</li>
+                        <li>Deshumanización del proceso educativo</li>
                     </ul>
                 </div>
             </div>
             
-              <!-- NEW Slide 27: Prompt Engineering -->
+            <!-- Slide 27: Prompt Engineering -->
             <div class="slide" data-slide="27">
                 <div class="w-full text-center">
-                    <h2 class="text-6xl font-extrabold text-slate-800 text-center">El Arte del <span class="text-indigo-600">Prompt Engineering</span> 🧑‍🎨</h2>
-                    <div class="bg-gray-200 p-6 w-full max-w-4xl mx-auto my-8 flex items-center justify-center rounded-lg shadow-inner">
-                        <p class="text-gray-800 text-xl font-mono leading-relaxed text-left">Actúa como un <strong class="text-indigo-600">diseñador instruccional experto</strong>. Crea una diapositiva sobre el <strong class="text-indigo-600">Principio de Coherencia</strong> de Mayer, usando el enfoque <strong class="text-indigo-600">Aserción-Evidencia</strong>. La aserción debe ser clara. La evidencia debe ser una <strong class="text-indigo-600">metáfora visual simple</strong>. El tono debe ser <strong class="text-indigo-600">directo y amigable</strong>.</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800">El Arte del <span class="text-indigo-600">Prompt Engineering</span> 🧑‍🎨</h2>
+                    <div class="bg-gray-200 p-4 md:p-6 w-full max-w-4xl mx-auto my-8 rounded-lg shadow-inner">
+                        <p class="text-gray-800 text-sm md:text-xl font-mono leading-relaxed text-left">Actúa como un <strong class="text-indigo-600">diseñador instruccional</strong>. Crea una diapositiva sobre el <strong class="text-indigo-600">Principio de Coherencia</strong>, usando el enfoque <strong class="text-indigo-600">Aserción-Evidencia</strong>. La aserción debe ser clara y la evidencia una <strong class="text-indigo-600">metáfora visual simple</strong>. El tono debe ser <strong class="text-indigo-600">amigable</strong>.</p>
                     </div>
-                    <p class="text-2xl text-center text-slate-600 max-w-5xl mx-auto">La calidad del resultado de la IA es directamente proporcional a la calidad de la instrucción. Sé claro, específico y proporciona contexto.</p>
+                    <p class="text-lg md:text-2xl text-slate-600 max-w-5xl mx-auto">La calidad del resultado de la IA es directamente proporcional a la calidad de la instrucción.</p>
                 </div>
             </div>
-            
-            <!-- NUEVO Slide xx: Trivia de Impacto 1 (Con Flip-Cards) -->
-            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="31">
+
+            <!-- Slide 28: Trivia Alucinaciones -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="28">
+                 <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Interactiva (3/5)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">Una "alucinación" de la IA se refiere a:</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Una respuesta incorrecta pero fabricada con confianza.</div><div class="flip-card-back correct"><p class="text-2xl md:text-4xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Un error visual en una imagen generada.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">La capacidad de la IA para soñar.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Un sesgo en los datos de entrenamiento.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 29: Trivia Error Común A-E -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="29">
                 <div class="w-full max-w-5xl mx-auto text-center">
-                    <p class="text-2xl font-bold text-indigo-400">Trivia Interactiva (3/5)</p>
-                    <h2 class="text-6xl font-extrabold my-8">Una "alucinación" de la IA se refiere a:</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-                        <!-- Opción 1 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Un error visual en una imagen.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 2 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Una respuesta incorrecta pero fabricada.</div>
-                                <div class="flip-card-back correct">
-                                    <p class="text-4xl font-bold">¡Correcto!</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 3 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">La capacidad de la IA para soñar.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 4 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Un sesgo en los datos de entrenamiento.</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Interactiva (4/5)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">¿Cuál es el error más común al aplicar el método Aserción-Evidencia?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Escribir el titular como una frase incompleta.</div><div class="flip-card-back correct"><p class="text-2xl md:text-4xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Usar una imagen de baja calidad.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">No citar la fuente de un gráfico.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Usar una tipografía demasiado grande.</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
                     </div>
                 </div>
             </div>
 
-
-            <!-- NUEVO Slide xx: Trivia de Impacto 1 (Con Flip-Cards) -->
-            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="31">
-                <div class="w-full max-w-5xl mx-auto text-center">
-                    <p class="text-2xl font-bold text-indigo-400">Trivia Interactiva (4/5)</p>
-                    <h2 class="text-6xl font-extrabold my-8">¿Cuál es el error más común al aplicar el método Aserción-Evidencia?</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-                        <!-- Opción 1 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Usar una imagen de baja calidad</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 2 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Escribir el titular como una frase incompleta</div>
-                                <div class="flip-card-back correct">
-                                    <p class="text-4xl font-bold">¡Correcto!</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 3 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">No citar la fuente de un gráfico</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 4 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Usar una tipografía demasiado grande</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Slide 30: Trivia Carga a Fomentar -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="30">
+                 <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Interactiva (5/5)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">Para maximizar el aprendizaje, ¿qué tipo de carga cognitiva debemos FOMENTAR?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Generativa</div><div class="flip-card-back correct"><p class="text-2xl md:text-4xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Intrínseca</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Extrínseca</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Carga Redundante</div><div class="flip-card-back incorrect"><p class="text-2xl md:text-4xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
                     </div>
                 </div>
             </div>
 
-            <!-- NUEVO Slide xx: Trivia de Impacto 2 (Con Flip-Cards) -->
-            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="32">
-                <div class="w-full max-w-5xl mx-auto text-center">
-                    <p class="text-2xl font-bold text-indigo-400">Trivia Interactiva (5/5)</p>
-                    <h2 class="text-6xl font-extrabold my-8">Para maximizar el aprendizaje, ¿qué tipo de carga cognitiva debemos FOMENTAR?</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-                        <!-- Opción 1 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Intrínseca</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
+            <!-- Slide 31: Conclusión -->
+            <div class="slide" data-slide="31">
+                <div class="w-full">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">Conclusión: Un Paradigma <span class="text-indigo-600">Híbrido</span></h2>
+                    <p class="text-xl md:text-3xl text-slate-600 mt-8 leading-relaxed">El futuro es la <strong class="font-semibold text-slate-800">colaboración sinérgica</strong>. La IA nos libera para enfocarnos en lo insustituible: la conexión humana.</p>
+                    <div class="flex flex-col lg:flex-row gap-8 mt-10 text-white text-center stagger-children">
+                        <div class="w-full lg:w-1/2 bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl">
+                            <h3 class="text-3xl md:text-5xl font-bold mb-4">🧠 Humano</h3>
+                            <p class="text-lg md:text-2xl">Aporta juicio pedagógico, creatividad y empatía.</p>
                         </div>
-                        <!-- Opción 2 -->
-                        <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Extrínseca</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 3 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Generativa</div>
-                                <div class="flip-card-back correct">
-                                    <p class="text-4xl font-bold">¡Correcto!</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción 4 -->
-                         <div class="flip-card impact-card" onclick="this.classList.toggle('is-flipped')">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">Carga Redundante</div>
-                                <div class="flip-card-back incorrect">
-                                    <p class="text-4xl font-bold">Incorrecto</p>
-                                    <svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-              <!-- Slide 29: Conclusión -->
-             <div class="slide" data-slide="29">
-                  <div class="w-full">
-                    <h2 class="text-6xl font-extrabold text-slate-800">Conclusión: Un Paradigma <span class="text-indigo-600">Híbrido</span></h2>
-                    <p class="text-3xl text-slate-600 mt-8 leading-relaxed">El futuro no es la sustitución, sino la <strong class="font-semibold text-slate-800">colaboración sinérgica</strong>. La IA nos libera para enfocarnos en lo insustituible: la conexión humana.</p>
-                    <div class="flex gap-8 mt-10 text-white text-center stagger-children">
-                         <div class="w-1/2 bg-slate-800 p-8 rounded-2xl shadow-xl">
-                            <h3 class="text-5xl font-bold mb-4">🧠 Humano</h3>
-                            <p class="text-2xl">Aporta el juicio pedagógico, la creatividad y la empatía.</p>
-                        </div>
-                         <div class="w-1/2 bg-indigo-600 p-8 rounded-2xl shadow-xl">
-                            <h3 class="text-5xl font-bold mb-4">🤖 IA</h3>
-                            <p class="text-2xl">Actúa como un potente asistente de producción y personalización.</p>
+                        <div class="w-full lg:w-1/2 bg-indigo-600 p-6 md:p-8 rounded-2xl shadow-xl">
+                            <h3 class="text-3xl md:text-5xl font-bold mb-4">🤖 IA</h3>
+                            <p class="text-lg md:text-2xl">Actúa como asistente de producción y personalización.</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- NEW Slide 30: Call to Action -->
-            <div class="slide" data-slide="30">
+            <!-- Slide 32: Call to Action -->
+            <div class="slide" data-slide="32">
                 <div class="w-full text-center">
-                    <h2 class="text-7xl font-extrabold text-slate-800 text-center">Tu Próximo Paso 🎯</h2>
-                    <p class="text-center text-4xl mt-8 text-slate-600 max-w-4xl mx-auto">Elige un principio de diseño que aprendiste hoy y aplícalo para mejorar una de tus diapositivas existentes. <strong class="text-indigo-600">¡Empieza pequeño, itera y verás la diferencia!</strong></p>
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-800">Tu Próximo Paso 🎯</h2>
+                    <p class="text-xl md:text-3xl lg:text-4xl mt-8 text-slate-600 max-w-4xl mx-auto">Elige un principio de diseño que aprendiste hoy y aplícalo para mejorar una de tus diapositivas. <strong class="text-indigo-600">¡Empieza pequeño, itera y verás la diferencia!</strong></p>
                 </div>
             </div>
-            
-            <!-- NEW Slide 31: References -->
-<div class="slide" data-slide="31">
-  <div class="w-full">
-    <h2 class="text-6xl font-extrabold text-slate-800">Referencias</h2>
-    <ul class="text-lg space-y-3 list-disc list-inside mt-6 overflow-y-auto max-h-[60vh] p-4 bg-slate-50 rounded-lg">
-      <li>Alley, M. (2018). <em>The craft of scientific presentations</em> (2ª ed.). Springer.</li>
-      <li>Baddeley, A. D. (1986). <em>Working memory</em>. Oxford University Press.</li>
-      <li>Clark, R. E., & Feldon, D. F. (2005). Five common but questionable principles of multimedia learning. En R. E. Mayer (Ed.), <em>The Cambridge handbook of multimedia learning</em> (pp. 97–115). Cambridge University Press.</li>
-      <li>Davis, F. D. (1989). Perceived usefulness, perceived ease of use, and user acceptance of information technology. <em>MIS Quarterly</em>, <em>13</em>(3), 319–340.</li>
-      <li>Kirschner, P. A., Sweller, J., & Clark, R. E. (2006). Why minimal guidance during instruction does not work: An analysis of the failure of constructivist, discovery, problem-based, experiential, and inquiry-based teaching. <em>Educational Psychologist</em>, <em>41</em>(2), 75–86.</li>
-      <li>Mayer, R. E. (2009). <em>Multimedia learning</em> (2ª ed.). Cambridge University Press.</li>
-      <li>Moreno, R., & Mayer, R. E. (2007). Interactive multimodal learning environments. <em>Educational Psychology Review</em>, <em>19</em>(3), 309–326.</li>
-      <li>Paivio, A. (1986). <em>Mental representations: A dual coding approach</em>. Oxford University Press.</li>
-      <li>Sweller, J. (1994). Cognitive load theory, learning difficulty, and instructional design. <em>Learning and Instruction</em>, <em>4</em>(4), 295–312.</li>
-      <li>Tufte, E. R. (2003). <em>The cognitive style of PowerPoint</em>. Graphics Press.</li>
-      <li>UNESCO. (2019). <em>Recommendation on Open Educational Resources (OER)</em>. UNESCO.</li>
-    </ul>
-  </div>
-</div>
 
+            <!-- Slide 33: Actividad -->
+            <div class="slide" data-slide="33">
+            <div class="w-full">
+                <h2 class="text-6xl font-extrabold text-slate-800 text-center">
+                🚀 ¡Actividad! <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Aplica lo Aprendido</span>
+                </h2>
+                <p class="text-center text-3xl mt-4 text-slate-600 max-w-4xl mx-auto">
+                Elige <strong class="font-semibold">UNA</strong> de las siguientes actividades y comparte tu creación.
+                </p>
 
-
-<div class="slide" data-slide="28">
-    <div class="w-full">
-        <h2 class="text-6xl font-extrabold text-slate-800 text-center">
-            🚀 ¡Actividad! <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Aplica lo Aprendido</span>
-        </h2>
-        <p class="text-center text-3xl mt-4 text-slate-600 max-w-4xl mx-auto">
-            Elige <strong class="font-semibold">UNA</strong> de las siguientes actividades y comparte tu creación.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-6xl mx-auto">
-            
-            <div class="bg-gradient-to-br from-indigo-600 to-blue-500 text-white p-8 rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 hover:scale-105">
-                <div class="flex-grow">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-6xl mx-auto">
+                
+                <!-- Actividad 1 -->
+                <div class="bg-gradient-to-br from-indigo-600 to-blue-500 text-white p-8 rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 hover:scale-105">
+                    <div class="flex-grow">
                     <h3 class="text-4xl font-black mb-4">Actividad 1: Rediseño Radical 🎨</h3>
                     <p class="text-xl leading-relaxed">
                         Toma una diapositiva <strong class="font-bold">tradicional y sobrecargada</strong> (tuya o de ejemplo) y rediséñala aplicando al menos <strong class="font-bold">TRES principios</strong> vistos hoy.
@@ -1003,73 +674,98 @@
                         <li>Principio de Señalización</li>
                         <li>Mejora de Contraste y Tipografía</li>
                     </ul>
-                </div>
-                <div class="mt-6 text-center bg-white/20 p-3 rounded-lg">
+                    </div>
+                    <div class="mt-6 text-center bg-white/20 p-3 rounded-lg">
                     <p class="font-semibold text-2xl">¡Muestra el antes y el después!</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-gradient-to-br from-pink-500 to-orange-500 text-white p-8 rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 hover:scale-105">
-                <div class="flex-grow">
+                <!-- Actividad 2 -->
+                <div class="bg-gradient-to-br from-pink-500 to-orange-500 text-white p-8 rounded-2xl shadow-2xl flex flex-col transition-transform duration-300 hover:scale-105">
+                    <div class="flex-grow">
                     <h3 class="text-4xl font-black mb-4">Actividad 2: Creación con IA 🤖</h3>
                     <p class="text-xl leading-relaxed">
                         Usa un asistente de IA (Gemini, ChatGPT) con un <strong class="font-bold">prompt bien diseñado</strong> para generar el contenido de una nueva diapositiva sobre un tema educativo de tu elección.
                     </p>
-                     <ul class="text-lg list-disc list-inside mt-4 space-y-2">
+                    <ul class="text-lg list-disc list-inside mt-4 space-y-2">
                         <li>Especifica el <strong class="font-bold">rol</strong> ("Actúa como...").</li>
                         <li>Define el <strong class="font-bold">público</strong> y el <strong class="font-bold">formato</strong> (Aserción-Evidencia).</li>
                         <li>Pide una <strong class="font-bold">metáfora visual</strong> para la evidencia.</li>
                         <li>No olvides detallar el <strong class="font-bold">tono</strong> deseado.</li>
                     </ul>
-                </div>
-                <div class="mt-6 text-center bg-white/20 p-3 rounded-lg">
+                    </div>
+                    <div class="mt-6 text-center bg-white/20 p-3 rounded-lg">
                     <p class="font-semibold text-2xl">¡Comparte tu prompt y el resultado!</p>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Contacto -->
+                <div class="mt-12 text-center">
+                    <p class="text-2xl font-bold text-slate-800">¡Envía tu trabajo y sigamos en contacto!</p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mt-4">
+                        
+                        <!-- Correo -->
+                        <div class="flex items-center gap-3 justify-center">
+                            <img src="image/correo.png" alt="Icono de Correo" class="w-8 h-8">
+                            <span class="text-xl text-slate-700 font-medium">talentboost.edu@gmail.com</span>
+                        </div>
+
+                        <!-- TikTok -->
+                        <div class="flex items-center gap-3 justify-center">
+                            <img src="image/tiktok.png" alt="Icono de TikTok" class="w-8 h-8">
+                            <a href="https://www.tiktok.com/@statchido" target="_blank" class="text-xl text-slate-700 font-medium hover:text-indigo-600 transition-colors">@statchido</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            </div>
+
+            
+            <!-- Slide 34: Referencias -->
+            <div class="slide" data-slide="34">
+              <div class="w-full">
+                <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">Referencias</h2>
+                <ul class="text-xs sm:text-sm lg:text-base space-y-2 list-disc list-inside mt-6 overflow-y-auto max-h-[65vh] p-4 bg-slate-50 rounded-lg">
+                  <li>Alley, M. (2018). <em>The craft of scientific presentations</em> (2ª ed.). Springer.</li>
+                  <li>Baddeley, A. D. (1986). <em>Working memory</em>. Oxford University Press.</li>
+                  <li>Clark, R. E., & Feldon, D. F. (2005). Five common but questionable principles of multimedia learning. En R. E. Mayer (Ed.), <em>The Cambridge handbook of multimedia learning</em> (pp. 97–115). Cambridge University Press.</li>
+                  <li>Davis, F. D. (1989). Perceived usefulness, perceived ease of use, and user acceptance of information technology. <em>MIS Quarterly</em>, <em>13</em>(3), 319–340.</li>
+                  <li>Kirschner, P. A., Sweller, J., & Clark, R. E. (2006). Why minimal guidance during instruction does not work. <em>Educational Psychologist</em>, <em>41</em>(2), 75–86.</li>
+                  <li>Mayer, R. E. (2009). <em>Multimedia learning</em> (2ª ed.). Cambridge University Press.</li>
+                  <li>Moreno, R., & Mayer, R. E. (2007). Interactive multimodal learning environments. <em>Educational Psychology Review</em>, <em>19</em>(3), 309–326.</li>
+                  <li>Paivio, A. (1986). <em>Mental representations: A dual coding approach</em>. Oxford University Press.</li>
+                  <li>Sweller, J. (1994). Cognitive load theory, learning difficulty, and instructional design. <em>Learning and Instruction</em>, <em>4</em>(4), 295–312.</li>
+                  <li>Tufte, E. R. (2003). <em>The cognitive style of PowerPoint</em>. Graphics Press.</li>
+                  <li>UNESCO. (2019). <em>Recommendation on Open Educational Resources (OER)</em>. UNESCO.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Slide 35: Final -->
+            <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="35">
+                <div class="text-center w-full">
+                    <h2 class="text-6xl md:text-8xl font-black animate-fade-in-up">¡Gracias!</h2>
+                    <p class="text-2xl md:text-4xl mt-8 text-indigo-400 animate-fade-in-up" style="animation-delay: 0.3s;">Preguntas y Discusión</p>
                 </div>
             </div>
-        </div>
 
-        <div class="mt-12 text-center">
-            <p class="text-2xl font-bold text-slate-800">¡Envía tu trabajo y sigamos en contacto!</p>
-            <div class="flex justify-center items-center gap-8 mt-4">
-                <div class="flex items-center gap-3">
-                    <img src="image/correo.png" alt="Icono de Correo" class="w-8 h-8">
-                    <span class="text-xl text-slate-700 font-medium">edir.gonzanorojas@gmail.com</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <img src="image/tiktok.png" alt="Icono de TikTok" class="w-8 h-8">
-                    <a href="https://www.tiktok.com/@statchido" target="_blank" class="text-xl text-slate-700 font-medium hover:text-indigo-600 transition-colors">@statchido</a>
-                </div>
-            </div>
-        </div>
-        </div>
-</div>
-
-
-
-
-
-
-              <!-- Slide 32: Final -->
-            <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="32">
-                 <div class="text-center w-full">
-                    <h2 class="text-8xl font-black animate-fade-in-up">¡Gracias!</h2>
-                    <p class="text-center text-4xl mt-8 text-indigo-400 animate-fade-in-up" style="animation-delay: 0.3s;">Preguntas y Discusión</p>
-                </div>
-            </div>
         </main>
 
         <!-- Controls -->
         <div id="controls-container">
             <div class="controls">
                 <button id="prev-btn" class="control-btn" aria-label="Diapositiva anterior">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
-                <div id="slide-counter" class="text-2xl font-bold text-slate-700 w-28 text-center">1 / 32</div>
+                <div id="slide-counter">1 / 35</div>
                 <button id="next-btn" class="control-btn" aria-label="Siguiente diapositiva">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
                 <button id="fullscreen-btn" class="control-btn" aria-label="Modo presentación">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5"></path></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5"></path></svg>
                 </button>
             </div>
         </div>
@@ -1089,20 +785,20 @@
         const totalSlides = slides.length;
 
         function updateSlide() {
+            // Ocultar la diapositiva anterior
             const oldSlide = slidesWrapper.querySelector('.active');
             if (oldSlide) {
                 oldSlide.classList.remove('active');
-                // Reset interactive elements in the old slide
-                const triviaButtons = oldSlide.querySelectorAll('button');
-                triviaButtons.forEach(btn => {
-                    btn.classList.remove('bg-red-500', 'bg-green-500', 'text-white', 'bg-red-100', 'bg-green-100');
+                // Reiniciar tarjetas interactivas en la diapositiva que se va
+                oldSlide.querySelectorAll('.flip-card.is-flipped').forEach(card => {
+                    card.classList.remove('is-flipped');
                 });
-                const flipCards = oldSlide.querySelectorAll('.flip-card');
-                flipCards.forEach(card => card.classList.remove('is-flipped'));
             }
             
+            // Mostrar la diapositiva actual
             slides[currentSlide].classList.add('active');
             
+            // Actualizar contador y estado de botones
             slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
             prevBtn.disabled = currentSlide === 0;
             nextBtn.disabled = currentSlide === totalSlides - 1;
@@ -1125,35 +821,39 @@
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 presentationContainer.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    console.error(`Error al intentar activar el modo de pantalla completa: ${err.message} (${err.name})`);
                 });
             } else {
                 document.exitFullscreen();
             }
         }
 
+        // Event Listeners
         nextBtn.addEventListener('click', showNextSlide);
         prevBtn.addEventListener('click', showPrevSlide);
         fullscreenBtn.addEventListener('click', toggleFullscreen);
 
+        // Navegación con teclado
         document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
             if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
                 showNextSlide();
             } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
                 showPrevSlide();
-            } else if (e.key === 'f') {
+            } else if (e.key.toLowerCase() === 'f') {
+                e.preventDefault();
                 toggleFullscreen();
             }
         });
 
-        updateSlide(); // Initialize first slide
+        // Inicializar la primera diapositiva
+        updateSlide(); 
     });
     </script>
 </body>
 </html>
-
-
-
-
-
 
